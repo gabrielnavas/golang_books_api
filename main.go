@@ -18,7 +18,7 @@ func main() {
 	category_repository := repository.NewCategoryRepository(db)
 	category_service := service.NewCategoryService(category_repository)
 	category_controller := controller.NewCategoryRepository(category_service)
-	r.HandleFunc("/category", category_controller.Create).Methods("POST", "OPTIONS")
+	r.HandleFunc("/category", category_controller.Create).Methods("POST")
 
 	// r.HandleFunc("/category").Methods("GET", "OPTIONS")
 	// r.HandleFunc("/category/{category_id}").Methods("GET", "OPTIONS")

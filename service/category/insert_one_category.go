@@ -1,4 +1,4 @@
-package service
+package servicecategory
 
 import (
 	"books_api/entity"
@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-type CategoryService interface {
+type InsertOneCategory interface {
 	InsertOne(entity.Category) (*entity.Category, error)
 }
 

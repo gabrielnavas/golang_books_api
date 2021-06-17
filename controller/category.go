@@ -2,7 +2,7 @@ package controller
 
 import (
 	"books_api/entity"
-	"books_api/service"
+	servicecategory "books_api/service"
 	"encoding/json"
 	"errors"
 	"io"
@@ -18,10 +18,10 @@ var (
 )
 
 type categoryControllerImpl struct {
-	categoryService service.CategoryService
+	categoryService servicecategory.InsertOneCategory
 }
 
-func NewCategoryRepository(categoryService service.CategoryService) *categoryControllerImpl {
+func NewCategoryRepository(categoryService servicecategory.InsertOneCategory) *categoryControllerImpl {
 	return &categoryControllerImpl{categoryService}
 }
 

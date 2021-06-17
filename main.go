@@ -4,7 +4,7 @@ import (
 	"books_api/controller"
 	"books_api/database"
 	"books_api/repository"
-	"books_api/service"
+	servicecategory "books_api/service"
 	"log"
 	"net/http"
 
@@ -16,7 +16,7 @@ func main() {
 	db := database.MakePostgresSQLDatabase()
 
 	category_repository := repository.NewCategoryRepository(db)
-	category_service := service.NewCategoryService(category_repository)
+	category_service := servicecategory.NewCategoryService(category_repository)
 	category_controller := controller.NewCategoryRepository(category_service)
 	r.HandleFunc("/category", category_controller.Create).Methods("POST")
 

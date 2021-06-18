@@ -27,6 +27,7 @@ func NewCategoryService(categoryRepository repository.CategoryRepository) *categ
 }
 
 func (c *categoryServiceImpl) InsertOne(category entity.Category) (*entity.Category, error) {
+	fmt.Println(category)
 	if category.Name == "" || len(category.Name) <= 2 {
 		return nil, ErrNameIsSmall
 	}

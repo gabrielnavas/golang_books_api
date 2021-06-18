@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -25,5 +26,16 @@ func main() {
 	// r.HandleFunc("/category").Methods("PUT", "OPTIONS")
 	// r.HandleFunc("/category").Methods("DELETE", "OPTIONS")
 
-	log.Fatal(http.ListenAndServe(":8000", r))
+	config_handlers := configCors()(r)
+	log.Fatal(http.ListenAndServe(":8000", config_handlers))
+}
+
+func configCors() func(http.Handler) http.Handler {
+	headersOptions := handlers.AllowedHeaders([]string{})
+	originsOptions := handlers.AllowedOrigins([]string{"*"})
+	methods := []string{}
+	methods = append(methods, "POST")
+	methodsOptions := handlers.AllowedMethods(methods)
+	return handlers.CORS(originsOptions, headersOptions, methodsOptions)
+
 }

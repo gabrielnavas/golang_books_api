@@ -21,3 +21,9 @@ func responseCreated(w *http.ResponseWriter, body interface{}) {
 	(*w).WriteHeader(http.StatusCreated)
 	json.NewEncoder(*w).Encode(body)
 }
+
+func responseOk(w *http.ResponseWriter, body interface{}) {
+	(*w).Header().Set("Content-Type", "application/json")
+	(*w).WriteHeader(http.StatusOK)
+	json.NewEncoder(*w).Encode(body)
+}

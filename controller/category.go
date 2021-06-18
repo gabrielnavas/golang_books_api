@@ -2,7 +2,8 @@ package controller
 
 import (
 	"books_api/entity"
-	servicecategory "books_api/service"
+	getall_category "books_api/service/get_all_category"
+	"books_api/service/insert_category"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 
 type CategoryController interface {
 	Create(w http.ResponseWriter, r *http.Request)
+	GetAll(w http.ResponseWriter, r *http.Request)
 }
 
 var (
@@ -19,11 +21,18 @@ var (
 )
 
 type categoryControllerImpl struct {
-	categoryService servicecategory.InsertOneCategory
+	insertOneCategoryService insert_category.InsertOneCategory
+	getAllCategoryService    getall_category.GetAllCategory
 }
 
-func NewCategoryRepository(categoryService servicecategory.InsertOneCategory) *categoryControllerImpl {
-	return &categoryControllerImpl{categoryService}
+func NewCategoryRepository(
+	insertOneCategoryService insert_category.InsertOneCategory,
+	getAllCategoryService getall_category.GetAllCategory,
+) *categoryControllerImpl {
+	return &categoryControllerImpl{
+		insertOneCategoryService,
+		getAllCategoryService,
+	}
 }
 
 func (c *categoryControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
@@ -41,9 +50,9 @@ func (c *categoryControllerImpl) Create(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	category_created, err := c.categoryService.InsertOne(category)
+	category_created, err := c.insertOneCategoryService.InsertOne(category)
 	if err != nil {
-		if err == servicecategory.ErrRepositoryError {
+		if err == insert_category.ErrRepositoryError {
 			responseJsonErr(&w, err, http.StatusInternalServerError)
 			return
 		}
@@ -52,4 +61,18 @@ func (c *categoryControllerImpl) Create(w http.ResponseWriter, r *http.Request) 
 	}
 
 	responseCreated(&w, category_created)
+}
+
+func (c *categoryControllerImpl) GetAll(w http.ResponseWriter, r *http.Request) {
+	categories, err := c.getAllCategoryService.GetAll()
+	if err != nil {
+		if err == getall_category.ErrRepositoryError {
+			responseJsonErr(&w, err, http.StatusInternalServerError)
+			return
+		}
+		responseJsonErr(&w, err, http.StatusBadRequest)
+		return
+	}
+
+	responseOk(&w, categories)
 }

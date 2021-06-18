@@ -1,4 +1,4 @@
-package servicecategory
+package insert_category
 
 import (
 	"books_api/entity"
@@ -11,22 +11,23 @@ type InsertOneCategory interface {
 	InsertOne(entity.Category) (*entity.Category, error)
 }
 
+type insertOneCategoryImpl struct {
+	categoryRepository repository.CategoryRepository
+}
+
 var (
 	ErrNameAlreadyExists = errors.New("category.name already exists")
 	ErrNameIsSmall       = errors.New("category.name is small")
 	ErrNameIsLarge       = errors.New("category.name is large")
-	ErrRepositoryError   = errors.New("service have a problem")
+
+	ErrRepositoryError = errors.New("service have a problem")
 )
 
-type categoryServiceImpl struct {
-	categoryRepository repository.CategoryRepository
+func NewInsertOneCategory(categoryRepository repository.CategoryRepository) *insertOneCategoryImpl {
+	return &insertOneCategoryImpl{categoryRepository}
 }
 
-func NewCategoryService(categoryRepository repository.CategoryRepository) *categoryServiceImpl {
-	return &categoryServiceImpl{categoryRepository}
-}
-
-func (c *categoryServiceImpl) InsertOne(category entity.Category) (*entity.Category, error) {
+func (c *insertOneCategoryImpl) InsertOne(category entity.Category) (*entity.Category, error) {
 	fmt.Println(category)
 	if category.Name == "" || len(category.Name) <= 2 {
 		return nil, ErrNameIsSmall
@@ -36,7 +37,7 @@ func (c *categoryServiceImpl) InsertOne(category entity.Category) (*entity.Categ
 	}
 	category_fetch, err := c.categoryRepository.GetByName(category.Name)
 	if err != nil {
-		fmt.Printf("categoryServiceImpl.InsertOne > repository.CategoryRepository.GetByName: %v", err)
+		fmt.Printf("insertOneCategoryImpl.InsertOne > repository.CategoryRepository.GetByName: %v", err)
 		return nil, ErrRepositoryError
 	}
 	if category_fetch != nil {
@@ -44,7 +45,7 @@ func (c *categoryServiceImpl) InsertOne(category entity.Category) (*entity.Categ
 	}
 	category_created, err := c.categoryRepository.Insert(category)
 	if err != nil {
-		fmt.Printf("categoryServiceImpl.InsertOne > repository.CategoryRepository.Insert: %v", err)
+		fmt.Printf("insertOneCategoryImpl.InsertOne > repository.CategoryRepository.Insert: %v", err)
 		return nil, ErrRepositoryError
 	}
 	return category_created, nil

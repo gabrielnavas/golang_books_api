@@ -8,6 +8,7 @@ import (
 type CategoryRepository interface {
 	Insert(c entity.Category) (*entity.Category, error)
 	GetByName(name string) (*entity.Category, error)
+	GetAll() ([]*entity.Category, error)
 }
 
 type categoryRepositoryImpl struct {
@@ -74,4 +75,25 @@ func (cr *categoryRepositoryImpl) Insert(c entity.Category) (*entity.Category, e
 		return nil, err
 	}
 	return &c, nil
+}
+
+func (cr *categoryRepositoryImpl) GetAll() ([]*entity.Category, error) {
+	sql := `
+		SELECT id, name
+		FROM book_api.category;
+	`
+	rows, err := cr.db.Query(sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	categories := []*entity.Category{}
+	for rows.Next() {
+		c := entity.Category{}
+		rows.Scan(&c.ID, &c.Name)
+		categories = append(categories, &c)
+	}
+
+	return categories, nil
 }

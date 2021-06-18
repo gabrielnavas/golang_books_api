@@ -31,7 +31,7 @@ func main() {
 }
 
 func configCors() func(http.Handler) http.Handler {
-	headersOptions := handlers.AllowedHeaders([]string{})
+	headersOptions := handlers.AllowedHeaders([]string{"Content-Type"})
 	originsOptions := handlers.AllowedOrigins([]string{"*"})
 	methods := []string{}
 	methods = append(methods, "POST")

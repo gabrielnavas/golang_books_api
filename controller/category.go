@@ -7,9 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
-	"strings"
 )
 
 type CategoryController interface {
@@ -54,37 +52,4 @@ func (c *categoryControllerImpl) Create(w http.ResponseWriter, r *http.Request) 
 	}
 
 	responseCreated(&w, category_created)
-}
-
-func getIP(r *http.Request) (string, error) {
-	//Get IP from the X-REAL-IP header
-	ip := r.Header.Get("X-REAL-IP")
-	netIP := net.ParseIP(ip)
-	if netIP != nil {
-		fmt.Printf("X-REAL-IP: %v\n", ip)
-		return ip, nil
-	}
-
-	//Get IP from X-FORWARDED-FOR header
-	ips := r.Header.Get("X-FORWARDED-FOR")
-	splitIps := strings.Split(ips, ",")
-	for _, ip := range splitIps {
-		netIP := net.ParseIP(ip)
-		if netIP != nil {
-			fmt.Printf("X-REAL-IP: %v\n", ip)
-			return ip, nil
-		}
-	}
-
-	//Get IP from RemoteAddr
-	ip, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		return "", err
-	}
-	netIP = net.ParseIP(ip)
-	if netIP != nil {
-		fmt.Printf("X-REAL-IP: %v\n", ip)
-		return ip, nil
-	}
-	return "", fmt.Errorf("no valid ip found")
 }
